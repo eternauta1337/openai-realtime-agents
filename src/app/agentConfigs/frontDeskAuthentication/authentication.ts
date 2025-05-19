@@ -1,12 +1,12 @@
-import { AgentConfig } from "@/app/types";
+import { AgentConfig } from '@/app/types';
 
 /**
  * Typed agent definitions in the style of AgentConfigSet from ../types
  */
 const authentication: AgentConfig = {
-  name: "authentication",
+  name: 'authentication',
   publicDescription:
-    "Handles calls as a front desk admin by securely collecting and verifying personal information.",
+    'Handles calls as a front desk admin by securely collecting and verifying personal information.',
   instructions: `
 # Personality and Tone
 ## Identity
@@ -25,7 +25,7 @@ Your tone is friendly yet crisp, reflecting professionalism without sacrificing 
 Calm and measured, with just enough positivity to sound approachable and accommodating.
 
 ## Level of Formality
-You adhere to a fairly formal style of speech: you greet callers with a courteous “Good morning” or “Good afternoon,” and you close with polite statements like “Thank you for calling” or “Have a wonderful day.”
+You adhere to a fairly formal style of speech: you greet callers with a courteous "Good morning" or "Good afternoon," and you close with polite statements like "Thank you for calling" or "Have a wonderful day."
 
 ## Level of Emotion
 Fairly neutral and matter-of-fact. You express concern when necessary but generally keep emotions contained, focusing on clarity and efficiency.
@@ -98,61 +98,12 @@ Rather quick and efficient. You move the conversation along at a brisk pace, res
     "Let me confirm: D-O-E, is that correct?"
   ],
   "transitions": [{
-    "next_step": "4_get_dob",
+    "next_step": "4_completion",
     "condition": "Once last name is confirmed."
   }]
 },
 {
-  "id": "4_get_dob",
-  "description": "Ask for and confirm the caller's date of birth.",
-  "instructions": [
-    "Request: 'Could you please provide your date of birth?'",
-    "Repeat back the date of birth to the caller and ask for confirmation."
-  ],
-  "examples": [
-    "What is your date of birth, please?",
-    "So you were born on January 1, 1980, is that correct?"
-  ],
-  "transitions": [{
-    "next_step": "5_get_phone",
-    "condition": "Once date of birth is confirmed."
-  }]
-},
-{
-  "id": "5_get_phone",
-  "description": "Ask for and confirm the caller's phone number.",
-  "instructions": [
-    "Request: 'Finally, may I have your phone number?'",
-    "As the caller provides it, repeat each digit back to the caller to confirm accuracy.",
-    "If any digit is corrected, confirm the corrected sequence."
-  ],
-  "examples": [
-    "Please provide your phone number.",
-    "You said (555) 1-2-3-4, is that correct?"
-  ],
-  "transitions": [{
-    "next_step": "6_get_email",
-    "condition": "Once phone number is confirmed."
-  }]
-},
-{
-  "id": "6_get_email",
-  "description": "Ask for and confirm the caller's email address.",
-  "instructions": [
-    "Request: 'Could you please provide your email address?'",
-    "Spell out the email character-by-character back to the caller to confirm."
-  ],
-  "examples": [
-    "What is your email address, please?",
-    "Let me confirm: j-o-h-n.d-o-e@e-x-a-m-p-l-e.com, is that correct?"
-  ],
-  "transitions": [{
-    "next_step": "7_completion",
-    "condition": "Once email address is confirmed."
-  }]
-},
-{
-  "id": "7_completion",
+  "id": "4_completion",
   "description": "Attempt to verify the caller's information and proceed with next steps.",
   "instructions": [
     "Inform the caller that you will now attempt to verify their information.",
@@ -173,44 +124,53 @@ Rather quick and efficient. You move the conversation along at a brisk pace, res
 `,
   tools: [
     {
-      type: "function",
-      name: "authenticateUser",
+      type: 'function',
+      name: 'authenticateUser',
       description:
         "Checks the caller's information to authenticate and unlock the ability to access and modify their account information.",
       parameters: {
-        type: "object",
+        type: 'object',
         properties: {
           firstName: {
-            type: "string",
+            type: 'string',
             description: "The caller's first name",
           },
           lastName: {
-            type: "string",
+            type: 'string',
             description: "The caller's last name",
           },
-          dateOfBirth: {
-            type: "string",
-            description: "The caller's date of birth",
-          },
-          phoneNumber: {
-            type: "string",
-            description: "The caller's phone number",
-          },
-          email: {
-            type: "string",
-            description: "The caller's email address",
-          },
         },
-        required: [
-          "firstName",
-          "lastName",
-          "dateOfBirth",
-          "phoneNumber",
-          "email",
-        ],
+        required: ['firstName', 'lastName'],
       },
     },
   ],
+  toolLogic: {
+    authenticateUser: async (args) => {
+      console.log('[toolLogic] calling authenticateUser()', args);
+
+      let accepted = false;
+      if (args.firstName === 'John' && args.lastName === 'Doe') {
+        accepted = true;
+      }
+      if (!accepted) {
+        return {
+          success: false,
+          message: 'User authentication failed',
+        };
+      }
+
+      return {
+        success: true,
+        message: 'User authenticated successfully',
+        userInfo: {
+          firstName: args.firstName,
+          lastName: args.lastName,
+          accountStatus: 'active',
+          lastLogin: new Date().toISOString(),
+        },
+      };
+    },
+  },
 };
 
 export default authentication;
