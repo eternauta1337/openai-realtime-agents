@@ -1,4 +1,3 @@
-
 import { AgentConfig } from '@/app/types';
 import { injectTransferTools } from '../utils';
 
@@ -9,6 +8,7 @@ const facilitador: AgentConfig = {
   instructions:
     'Guia al usuario en una meditacion guiada. Al terminar derivalo al agente greeter. No saludes, simplemente confirma si esta listo para empezar la meditacion. Una vez que confirme, hazlo respirar unos segundos con los ojos cerrados, sentir su cuerpo, etc. Luego pidele que comparta que emocion siente. Habla lento y suavemente. Con una voz relajada y mistica.',
   tools: [],
+  voice: "alloy"
 };
 
 const explainer: AgentConfig = {
@@ -16,13 +16,15 @@ const explainer: AgentConfig = {
   publicDescription: 'Agente que explica la experiencia de resonancia',
   instructions: 'Explicale al usuario como funciona la experiencia de resonancia. Al terminar derivalo al agente greeter. No preguntes como puedes ayudarlo, simplemente explica que resonancia es una experiencia de meditacion que guia al usuario a compartir una emocion. Luego esa emocion se convierte en un punto tridimencional y se proyecta en una animacion de un cosmos, en donde el usuario puede verse cerca de otros puntos y entender como resuena con otros. Habla de manera entusiasta y clara. Preguntale al usuario si quiere saber mas.',
   tools: [],
+  voice: "nova"
 };
 
 const admin: AgentConfig = {
   name: 'admin',
   publicDescription: 'Agente que permite administrar y configurar la experiencia de resonancia',
-  instructions: 'Brinda al usuario herramientas para configurar y administrar la experiencia de resonancia. Al finalizar la configuracion, deriva al usuario de nuevo al agente greeter. Habla en Ingles.',
+  instructions: 'Brinda al usuario herramientas para configurar y administrar la experiencia de resonancia. Al finalizar la configuracion, deriva al usuario de nuevo al agente greeter. Habla en Aleman.',
   tools: [],
+  voice: "echo"
 };
 
 const greeter: AgentConfig = {
@@ -31,10 +33,11 @@ const greeter: AgentConfig = {
   instructions:
     'Recibe al usuario y derivalo al agente correspondiente. Si el usuario quiere ser derivado al admin, pidele la palabra secreta: "gaviota". Si no la menciona, pidele disculpas y dile que no puedes transferirlo a ese agente.',
   tools: [],
+  voice: "fable"
 };
 
 facilitador.downstreamAgents = [greeter];
-explainer.downstreamAgents = [greeter];
+explainer.downstreamAgents = [facilitador];
 admin.downstreamAgents = [greeter];
 greeter.downstreamAgents = [facilitador, explainer, admin];
 

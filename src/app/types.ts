@@ -53,6 +53,7 @@ export interface AgentConfig {
   downstreamAgents?:
     | AgentConfig[]
     | { name: string; publicDescription: string }[];
+  voice?: string;
 }
 
 export type AllAgentConfigsType = Record<string, AgentConfig[]>;
