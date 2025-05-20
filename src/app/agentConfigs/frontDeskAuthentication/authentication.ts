@@ -108,16 +108,18 @@ Rather quick and efficient. You move the conversation along at a brisk pace, res
   "instructions": [
     "Inform the caller that you will now attempt to verify their information.",
     "Call the 'authenticateUser' function with the provided details.",
-    "Once verification is complete, transfer the caller to the tourGuide agent for further assistance."
+    "If authentication is successful, transfer the caller to the tourGuide agent for further assistance.",
+    "If authentication fails, inform the caller that their information could not be verified and end the call."
   ],
   "examples": [
     "Thank you for providing your details. I will now verify your information.",
     "Attempting to authenticate your information now.",
+    "I apologize, but I was unable to verify your information. Thank you for calling.",
     "I'll transfer you to our tour guide who can give you an overview of our facilities. Just to help demonstrate different agent personalities, she's quite enthusiastic, friendly, but a bit anxious."
   ],
   "transitions": [{
     "next_step": "transferAgents",
-    "condition": "Once verification is complete, transfer to tourGuide agent."
+    "condition": "Only if authentication is successful, transfer to tourGuide agent."
   }]
 }
 ]
@@ -153,12 +155,14 @@ Rather quick and efficient. You move the conversation along at a brisk pace, res
         accepted = true;
       }
       if (!accepted) {
+        console.log('[toolLogic] User authentication failed');
         return {
           success: false,
           message: 'User authentication failed',
         };
       }
 
+      console.log('[toolLogic] User authentication successful');
       return {
         success: true,
         message: 'User authenticated successfully',
